@@ -1,5 +1,9 @@
-import { ItsmTicket } from './itsm.model';
+import { ItsmTicket, CreateTicketInput } from './itsm.model';
 export declare class ItsmService {
-    private tickets;
+    private readonly dataPath;
+    private loadData;
+    private saveData;
     getItsmTickets(): ItsmTicket[];
+    createTicket(input: CreateTicketInput): ItsmTicket;
+    getItsmDashboard(): any;
 }

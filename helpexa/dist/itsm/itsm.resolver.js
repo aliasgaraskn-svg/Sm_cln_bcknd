@@ -8,6 +8,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ItsmResolver = void 0;
 const graphql_1 = require("@nestjs/graphql");
@@ -21,6 +24,12 @@ let ItsmResolver = class ItsmResolver {
     getItsmTickets() {
         return this.itsmService.getItsmTickets();
     }
+    getItsmDashboard() {
+        return this.itsmService.getItsmDashboard();
+    }
+    createTicket(input) {
+        return this.itsmService.createTicket(input);
+    }
 };
 exports.ItsmResolver = ItsmResolver;
 __decorate([
@@ -29,6 +38,19 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], ItsmResolver.prototype, "getItsmTickets", null);
+__decorate([
+    (0, graphql_1.Query)(() => itsm_model_1.ItsmDashboard, { name: 'itsmDashboard' }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], ItsmResolver.prototype, "getItsmDashboard", null);
+__decorate([
+    (0, graphql_1.Mutation)(() => itsm_model_1.ItsmTicket),
+    __param(0, (0, graphql_1.Args)('input')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [itsm_model_1.CreateTicketInput]),
+    __metadata("design:returntype", void 0)
+], ItsmResolver.prototype, "createTicket", null);
 exports.ItsmResolver = ItsmResolver = __decorate([
     (0, graphql_1.Resolver)(() => itsm_model_1.ItsmTicket),
     __metadata("design:paramtypes", [itsm_service_1.ItsmService])

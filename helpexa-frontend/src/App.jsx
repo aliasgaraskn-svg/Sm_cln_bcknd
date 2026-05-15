@@ -7,6 +7,8 @@ import Account from './pages/Account';
 import AskAI from './pages/AskAI';
 import HRMSDashboard from './pages/HRMSDashboard';
 import ApplyLeave from './pages/ApplyLeave';
+import NewTicket from './pages/NewTicket';
+import ITSMDashboard from './pages/ITSMDashboard';
 
 
 
@@ -65,6 +67,8 @@ function App() {
           <Route path="/account" element={<Account onLogout={handleLogout} />} />
           <Route path="/hrms" element={<HRMSDashboard />} />
           <Route path="/apply-leave" element={<ApplyLeave />} />
+          <Route path="/new-ticket" element={<NewTicket />} />
+          <Route path="/itsm" element={<ITSMDashboard />} />
           <Route path="*" element={<Navigate to="/" replace />} />
 
 

@@ -1,6 +1,6 @@
-import { Resolver, Query } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { ItsmService } from './itsm.service';
-import { ItsmTicket } from './itsm.model';
+import { ItsmTicket, CreateTicketInput, ItsmDashboard } from './itsm.model';
 
 @Resolver(() => ItsmTicket)
 export class ItsmResolver {
@@ -9,5 +9,15 @@ export class ItsmResolver {
   @Query(() => [ItsmTicket], { name: 'itsmTickets' })
   getItsmTickets() {
     return this.itsmService.getItsmTickets();
+  }
+
+  @Query(() => ItsmDashboard, { name: 'itsmDashboard' })
+  getItsmDashboard() {
+    return this.itsmService.getItsmDashboard();
+  }
+
+  @Mutation(() => ItsmTicket)
+  createTicket(@Args('input') input: CreateTicketInput) {
+    return this.itsmService.createTicket(input);
   }
 }

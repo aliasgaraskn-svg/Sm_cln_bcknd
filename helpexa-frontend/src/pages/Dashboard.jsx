@@ -14,7 +14,7 @@ import {
 const DASHBOARD_QUERY = gql`
   query GetDashboard {
     hrRequests { id title status }
-    itsmTickets { id issue status assignedTo }
+    itsmTickets { id subject status assignedTo }
     expenseItems { id title }
     approvals { id title requestor }
     surveys { id title deadline }
@@ -84,8 +84,11 @@ export default function Dashboard() {
           <div 
             key={domain.id} 
             className="domain-card glass"
-            onClick={() => domain.id === 'hr' && navigate('/hrms')}
-            style={{ cursor: domain.id === 'hr' ? 'pointer' : 'default' }}
+            onClick={() => {
+              if (domain.id === 'hr') navigate('/hrms');
+              if (domain.id === 'it') navigate('/itsm');
+            }}
+            style={{ cursor: (domain.id === 'hr' || domain.id === 'it') ? 'pointer' : 'default' }}
           >
             <div className="domain-icon">{domain.icon}</div>
             <h4 style={{ marginBottom: '4px' }}>{domain.title}</h4>

@@ -109,7 +109,7 @@ export class AgentService {
     if (input.includes('it') || input.includes('ticket') || input.includes('helpdesk')) {
       toolsUsed.push('GET_IT_TICKETS');
       const data = this.itsmService.getItsmTickets();
-      text += `• Found ${data.length} IT tickets (Latest: ${data[0].issue}, Assigned: ${data[0].assignedTo})\n`;
+      text += `• Found ${data.length} IT tickets (Latest: ${data[0].subject}, Assigned: ${data[0].assignedTo})\n`;
     }
 
     if (input.includes('expense') || input.includes('travel')) {

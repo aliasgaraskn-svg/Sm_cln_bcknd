@@ -1,6 +1,18 @@
 {
   "requests": [
     {
+      "id": "HR-419",
+      "title": "Casual Leave",
+      "status": "Pending",
+      "date": "2026-05-14"
+    },
+    {
+      "id": "HR-737",
+      "title": "Privilege Leave",
+      "status": "Pending",
+      "date": "2026-05-14"
+    },
+    {
       "id": "HR-516",
       "title": "Casual Leave",
       "status": "Pending",
@@ -26,9 +38,9 @@
     }
   ],
   "balances": {
-    "total": 16,
-    "casual": 6,
+    "total": 14,
+    "casual": 5,
     "sick": 6,
-    "earned": 4
+    "earned": 3
   }
 }
