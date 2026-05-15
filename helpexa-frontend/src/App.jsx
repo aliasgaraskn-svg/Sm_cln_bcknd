@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate, NavLink } from 'react-router-dom';
-import { Home, MessageSquare, Bell, User, LogOut } from 'lucide-react';
+import { useQuery, gql } from '@apollo/client';
+import { Home, MessageSquare, Bell, User as UserIcon, LogOut } from 'lucide-react';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Account from './pages/Account';
@@ -10,14 +11,36 @@ import ApplyLeave from './pages/ApplyLeave';
 import NewTicket from './pages/NewTicket';
 import ITSMDashboard from './pages/ITSMDashboard';
 
-
+const ME_QUERY = gql`
+  query GetMe {
+    me {
+      id
+      username
+      role
+    }
+  }
+`;
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(true);
   const navigate = useNavigate();
 
+  const { data, loading, error } = useQuery(ME_QUERY, {
+    fetchPolicy: 'network-only',
+    onCompleted: (data) => {
+      if (data && data.me) {
+        setIsAuthenticated(true);
+      }
+      setIsInitializing(false);
+    },
+    onError: () => {
+      setIsInitializing(false);
+    }
+  });
+
   const handleLogin = (e) => {
-    e.preventDefault();
+    // This is just for UI transition, the real login happens in the Login page
     setIsAuthenticated(true);
     navigate('/');
   };
@@ -26,6 +49,10 @@ function App() {
     setIsAuthenticated(false);
     navigate('/login');
   };
+
+  if (isInitializing || loading) {
+    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'white' }}>Loading Helpexa...</div>;
+  }
 
   if (!isAuthenticated) {
     return (
@@ -51,10 +78,10 @@ function App() {
             <Bell size={20} /> Notifications
           </NavLink>
           <NavLink to="/account" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
-            <User size={20} /> Account
+            <UserIcon size={20} /> Account
           </NavLink>
         </nav>
-        <button onClick={handleLogout} className="nav-item" style={{ background: 'transparent', border: 'none', width: '100%', cursor: 'pointer' }}>
+        <button onClick={handleLogout} className="nav-item" style={{ background: 'transparent', border: 'none', width: '100%', cursor: 'pointer', textAlign: 'left' }}>
           <LogOut size={20} /> Sign Out
         </button>
       </aside>
@@ -70,8 +97,6 @@ function App() {
           <Route path="/new-ticket" element={<NewTicket />} />
           <Route path="/itsm" element={<ITSMDashboard />} />
           <Route path="*" element={<Navigate to="/" replace />} />
-
-
         </Routes>
       </main>
     </div>

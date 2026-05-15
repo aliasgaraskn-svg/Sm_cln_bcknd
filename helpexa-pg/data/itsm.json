@@ -1,0 +1,44 @@
+{
+  "tickets": [
+    {
+      "id": "IT-3470",
+      "category": "Hardware",
+      "priority": "Urgent",
+      "subject": "laptop fan not working",
+      "description": "laptop fan not working",
+      "status": "Open",
+      "assignedTo": "Unassigned",
+      "date": "2026-05-15"
+    },
+    {
+      "id": "IT-8576",
+      "category": "Hardware",
+      "priority": "Medium",
+      "subject": "Laptop battery issue",
+      "description": "The laptop is not charging beyond 10% and getting very hot.",
+      "status": "Open",
+      "assignedTo": "Unassigned",
+      "date": "2026-05-15"
+    },
+    {
+      "id": "IT-2001",
+      "category": "Hardware",
+      "priority": "Medium",
+      "subject": "Laptop screen flickering",
+      "description": "The screen flickers every few minutes.",
+      "status": "In Progress",
+      "assignedTo": "John Doe",
+      "date": "2026-05-14"
+    },
+    {
+      "id": "IT-2002",
+      "category": "Access",
+      "priority": "High",
+      "subject": "VPN Access Request",
+      "description": "Need VPN access for remote work.",
+      "status": "Resolved",
+      "assignedTo": "Jane Smith",
+      "date": "2026-05-13"
+    }
+  ]
+}

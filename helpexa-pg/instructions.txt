@@ -1,0 +1,14 @@
+helpexa (The Backend): This is the "brain." It stores your data (in the data folder), handles the logic, and talks to Gemini AI.
+helpexa-frontend (The Frontend): This is the "face." It's the beautiful dashboard you see in your browser.
+📋 Steps to migrate both to your new laptop:
+Zip both folders:
+C:\Users\ali_asgar\workspace\helpexa (Make sure the .env and data folder are included!)
+C:\Users\ali_asgar\workspace\helpexa-frontend
+On the new laptop: Unzip them into a folder (e.g., C:\workspace\).
+Install dependencies: Open a terminal in each folder and run:
+powershell
+npm install
+Start both:
+In helpexa: npm run start (Wait for "Nest application successfully started").
+In helpexa-frontend: npm run dev.
+Once both are running, your dashboard will be exactly the same as it is here! 🚀

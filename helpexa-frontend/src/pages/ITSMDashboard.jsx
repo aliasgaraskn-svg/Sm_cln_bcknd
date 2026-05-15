@@ -28,6 +28,13 @@ const ITSM_DASHBOARD_QUERY = gql`
         name
         type
       }
+      recentTickets {
+        id
+        subject
+        status
+        category
+        openDate
+      }
     }
   }
 `;
@@ -39,10 +46,10 @@ export default function ITSMDashboard() {
   if (loading) return <div className="loading">Loading ITSM data...</div>;
   if (error) return <div className="error">Error: {error.message}</div>;
 
-  const { stats, myAssets } = data.itsmDashboard;
+  const { stats, myAssets, recentTickets } = data.itsmDashboard;
 
   return (
-    <div className="itsm-dashboard">
+    <div className="itsm-dashboard" style={{ paddingBottom: '100px' }}>
       <div className="header" style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
         <button onClick={() => navigate('/')} className="back-btn glass">
           <ChevronLeft size={24} />
@@ -75,7 +82,7 @@ export default function ITSMDashboard() {
 
       {/* Tickets Section */}
       <section className="dashboard-section">
-        <h3>Tickets</h3>
+        <h3 className="hrms-section-title">Tickets</h3>
         <div className="action-list glass">
           <div className="action-item" onClick={() => navigate('/new-ticket')}>
             <div className="icon-box"><Plus size={20} /></div>
@@ -89,23 +96,39 @@ export default function ITSMDashboard() {
             <div className="icon-box"><Layout size={20} /></div>
             <div className="content">
               <div className="title">My tickets</div>
-              <div className="subtitle">{stats.openCount} open · 12 closed this quarter</div>
-            </div>
-            <ChevronRight size={20} className="chevron" />
-          </div>
-          <div className="action-item">
-            <div className="icon-box"><Users size={20} /></div>
-            <div className="content">
-              <div className="title">Team tickets</div>
+              <div className="subtitle">{stats.openCount} open · {stats.resolvedYtd} resolved YTD</div>
             </div>
             <ChevronRight size={20} className="chevron" />
           </div>
         </div>
       </section>
 
+      {/* Recent Tickets List */}
+      <section className="dashboard-section">
+        <h3 className="hrms-section-title">RECENT ACTIVITY</h3>
+        <div className="action-list glass">
+          {recentTickets.length > 0 ? recentTickets.map(ticket => (
+            <div key={ticket.id} className="action-item">
+              <div className="icon-box">
+                {ticket.category === 'Hardware' ? <Monitor size={20} /> : <Layout size={20} />}
+              </div>
+              <div className="content">
+                <div className="title">{ticket.subject}</div>
+                <div className="subtitle">{ticket.status} · {ticket.category}</div>
+              </div>
+              <div style={{ fontSize: '0.75rem', opacity: 0.5 }}>
+                {new Date(ticket.openDate).toLocaleDateString()}
+              </div>
+            </div>
+          )) : (
+            <div style={{ padding: '20px', textAlign: 'center', opacity: 0.5 }}>No recent tickets</div>
+          )}
+        </div>
+      </section>
+
       {/* Assets & Access */}
       <section className="dashboard-section">
-        <h3>Assets & Access</h3>
+        <h3 className="hrms-section-title">ASSETS & ACCESS</h3>
         <div className="action-list glass">
           <div className="action-item">
             <div className="icon-box"><Monitor size={20} /></div>
@@ -120,36 +143,6 @@ export default function ITSMDashboard() {
             <div className="content">
               <div className="title">Request access</div>
               <div className="subtitle">Apps · Folders · VPN</div>
-            </div>
-            <ChevronRight size={20} className="chevron" />
-          </div>
-          <div className="action-item">
-            <div className="icon-box"><ShoppingBag size={20} /></div>
-            <div className="content">
-              <div className="title">Software catalog</div>
-              <div className="subtitle">Self-service install</div>
-            </div>
-            <ChevronRight size={20} className="chevron" />
-          </div>
-        </div>
-      </section>
-
-      {/* Status */}
-      <section className="dashboard-section">
-        <h3>Status</h3>
-        <div className="action-list glass">
-          <div className="action-item">
-            <div className="icon-box"><Settings size={20} /></div>
-            <div className="content">
-              <div className="title">System status</div>
-              <div className="subtitle">All systems operational</div>
-            </div>
-            <ChevronRight size={20} className="chevron" />
-          </div>
-          <div className="action-item">
-            <div className="icon-box"><LifeBuoy size={20} /></div>
-            <div className="content">
-              <div className="title">Knowledge base</div>
             </div>
             <ChevronRight size={20} className="chevron" />
           </div>
@@ -168,7 +161,7 @@ export default function ITSMDashboard() {
           margin-bottom: 32px;
         }
         .stat-card {
-          padding: 20px;
+          padding: 24px;
           border-radius: 24px;
           display: flex;
           flex-direction: column;
@@ -177,38 +170,48 @@ export default function ITSMDashboard() {
         .stat-card.orange {
           background: #ff6b00;
           color: white;
+          box-shadow: 0 10px 20px rgba(255, 107, 0, 0.2);
         }
         .stat-card .top {
           display: flex;
           justify-content: space-between;
           font-size: 0.75rem;
-          font-weight: 600;
+          font-weight: 700;
+          letter-spacing: 0.05em;
           opacity: 0.9;
         }
         .stat-card .value {
           font-size: 2.5rem;
-          font-weight: 700;
+          font-weight: 800;
         }
         .stat-card .subtext {
           font-size: 0.875rem;
           opacity: 0.8;
+          font-weight: 500;
         }
 
         .dashboard-section {
-          margin-bottom: 24px;
+          margin-bottom: 32px;
         }
-        .dashboard-section h3 {
-          font-size: 1.125rem;
+        .hrms-section-title {
+          font-size: 0.75rem;
+          font-weight: 700;
+          color: rgba(255, 255, 255, 0.5);
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
           margin-bottom: 12px;
-          opacity: 0.9;
+          padding-left: 4px;
         }
         .action-list {
           display: flex;
           flex-direction: column;
           overflow: hidden;
+          background: rgba(255, 255, 255, 0.03);
+          border: 1px solid rgba(255, 255, 255, 0.05);
+          border-radius: 24px;
         }
         .action-item {
-          padding: 16px;
+          padding: 20px;
           display: flex;
           align-items: center;
           gap: 16px;
@@ -223,14 +226,14 @@ export default function ITSMDashboard() {
           background: rgba(255,255,255,0.05);
         }
         .icon-box {
-          width: 40px;
-          height: 40px;
+          width: 48px;
+          height: 48px;
           background: rgba(255,255,255,0.05);
-          border-radius: 12px;
+          border-radius: 14px;
           display: flex;
           align-items: center;
           justify-content: center;
-          opacity: 0.7;
+          opacity: 0.8;
         }
         .content {
           flex: 1;
@@ -238,23 +241,28 @@ export default function ITSMDashboard() {
         .content .title {
           font-weight: 600;
           font-size: 1rem;
+          color: white;
         }
         .content .subtitle {
           font-size: 0.8125rem;
-          color: var(--text-muted);
+          color: rgba(255, 255, 255, 0.4);
           margin-top: 2px;
         }
         .chevron {
           opacity: 0.3;
+          color: white;
         }
         .back-btn {
-          width: 40px;
-          height: 40px;
+          width: 44px;
+          height: 44px;
           display: flex;
           align-items: center;
           justify-content: center;
-          border-radius: 12px;
+          border-radius: 14px;
           cursor: pointer;
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          color: white;
         }
       `}</style>
     </div>

@@ -1,6 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useLazyQuery, gql } from '@apollo/client';
+import { useLazyQuery, useQuery, gql } from '@apollo/client';
 import { Send, Bot, User, Loader2, Wrench } from 'lucide-react';
+import { Link } from 'react-router-dom';
+
+const CHAT_HISTORY_QUERY = gql`
+  query ChatHistory {
+    chatHistory {
+      role
+      text
+      toolsUsed
+    }
+  }
+`;
 
 const ASK_AGENT_QUERY = gql`
   query AskAgent($prompt: String!) {
@@ -11,13 +22,56 @@ const ASK_AGENT_QUERY = gql`
   }
 `;
 
+const MarkdownText = ({ text }) => {
+  const parts = text.split(/(\[.*?\]\(.*?\))/g);
+  return (
+    <>
+      {parts.map((part, i) => {
+        const match = part.match(/\[(.*?)\]\((.*?)\)/);
+        if (match) {
+          return (
+            <Link 
+              key={i} 
+              to={match[2]} 
+              style={{ 
+                color: '#60a5fa', 
+                textDecoration: 'underline', 
+                fontWeight: 'bold',
+                cursor: 'pointer'
+              }}
+            >
+              {match[1]}
+            </Link>
+          );
+        }
+        return <span key={i}>{part}</span>;
+      })}
+    </>
+  );
+};
+
 export default function AskAI() {
   const [input, setInput] = useState('');
-  const [messages, setMessages] = useState([
-    { role: 'ai', text: "Hello! I'm Helpexa, your Agentic Assistant. I can check your HR requests, IT tickets, or Expenses. How can I help you today?", tools: [] }
-  ]);
+  const [messages, setMessages] = useState([]);
   
-  const [askAgent, { loading }] = useLazyQuery(ASK_AGENT_QUERY, {
+  // Load History
+  const { data: historyData, loading: historyLoading } = useQuery(CHAT_HISTORY_QUERY, {
+    onCompleted: (data) => {
+      if (data.chatHistory && data.chatHistory.length > 0) {
+        setMessages(data.chatHistory.map(m => ({
+          role: m.role,
+          text: m.text,
+          tools: m.toolsUsed || []
+        })));
+      } else {
+        setMessages([
+          { role: 'ai', text: "Hello! I'm Helpexa, your Agentic Assistant. I can check your HR requests, IT tickets, or Expenses. How can I help you today?", tools: [] }
+        ]);
+      }
+    }
+  });
+
+  const [askAgent, { loading: agentLoading }] = useLazyQuery(ASK_AGENT_QUERY, {
     onCompleted: (data) => {
       setMessages(prev => [...prev, { 
         role: 'ai', 
@@ -41,10 +95,10 @@ export default function AskAI() {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, agentLoading]);
 
   const handleSend = () => {
-    if (!input.trim() || loading) return;
+    if (!input.trim() || agentLoading) return;
 
     const userMessage = input.trim();
     setMessages(prev => [...prev, { role: 'user', text: userMessage }]);
@@ -63,61 +117,70 @@ export default function AskAI() {
       <div className="glass" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', padding: '20px' }}>
         {/* Chat History */}
         <div style={{ flex: 1, overflowY: 'auto', marginBottom: '20px', paddingRight: '10px' }}>
-          {messages.map((msg, index) => (
-            <div key={index} style={{ 
-              display: 'flex', 
-              flexDirection: 'column',
-              alignItems: msg.role === 'user' ? 'flex-end' : 'flex-start',
-              marginBottom: '16px'
-            }}>
-              <div style={{ 
-                display: 'flex', 
-                gap: '8px', 
-                alignItems: 'center', 
-                marginBottom: '4px',
-                color: 'var(--text-muted)',
-                fontSize: '0.75rem'
-              }}>
-                {msg.role === 'ai' ? <Bot size={14} /> : <User size={14} />}
-                {msg.role === 'ai' ? 'Helpexa Agent' : 'You'}
-              </div>
-              <div style={{ 
-                maxWidth: '80%',
-                padding: '12px 16px',
-                borderRadius: '12px',
-                background: msg.role === 'user' ? 'var(--primary)' : 'rgba(255,255,255,0.05)',
-                color: 'white',
-                fontSize: '0.95rem',
-                lineHeight: '1.5',
-                whiteSpace: 'pre-wrap'
-              }}>
-                {msg.text}
-              </div>
-              {msg.tools && msg.tools.length > 0 && (
-                <div style={{ display: 'flex', gap: '4px', marginTop: '4px' }}>
-                  {msg.tools.map(tool => (
-                    <span key={tool} style={{ 
-                      fontSize: '0.65rem', 
-                      background: 'rgba(16, 185, 129, 0.1)', 
-                      color: 'var(--success)', 
-                      padding: '2px 6px', 
-                      borderRadius: '4px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '4px'
-                    }}>
-                      <Wrench size={10} /> {tool}
-                    </span>
-                  ))}
+          {(historyLoading && messages.length === 0) ? (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', color: 'var(--text-muted)' }}>
+              <Loader2 className="spin" size={24} />
+              <span style={{ marginLeft: '12px' }}>Loading conversation history...</span>
+            </div>
+          ) : (
+            <>
+              {messages.map((msg, index) => (
+                <div key={index} style={{ 
+                  display: 'flex', 
+                  flexDirection: 'column',
+                  alignItems: msg.role === 'user' ? 'flex-end' : 'flex-start',
+                  marginBottom: '16px'
+                }}>
+                  <div style={{ 
+                    display: 'flex', 
+                    gap: '8px', 
+                    alignItems: 'center', 
+                    marginBottom: '4px',
+                    color: 'var(--text-muted)',
+                    fontSize: '0.75rem'
+                  }}>
+                    {msg.role === 'ai' ? <Bot size={14} /> : <User size={14} />}
+                    {msg.role === 'ai' ? 'Helpexa Agent' : 'You'}
+                  </div>
+                  <div style={{ 
+                    maxWidth: '80%',
+                    padding: '12px 16px',
+                    borderRadius: '12px',
+                    background: msg.role === 'user' ? 'var(--primary)' : 'rgba(255,255,255,0.05)',
+                    color: 'white',
+                    fontSize: '0.95rem',
+                    lineHeight: '1.5',
+                    whiteSpace: 'pre-wrap'
+                  }}>
+                    <MarkdownText text={msg.text} />
+                  </div>
+                  {msg.tools && msg.tools.length > 0 && (
+                    <div style={{ display: 'flex', gap: '4px', marginTop: '4px' }}>
+                      {msg.tools.map(tool => (
+                        <span key={tool} style={{ 
+                          fontSize: '0.65rem', 
+                          background: 'rgba(16, 185, 129, 0.1)', 
+                          color: 'var(--success)', 
+                          padding: '2px 6px', 
+                          borderRadius: '4px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px'
+                        }}>
+                          <Wrench size={10} /> {tool}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+              {agentLoading && (
+                <div style={{ display: 'flex', gap: '8px', color: 'var(--text-muted)', alignItems: 'center', marginBottom: '16px' }}>
+                  <Loader2 size={16} className="spin" />
+                  <span style={{ fontSize: '0.875rem' }}>Thinking...</span>
                 </div>
               )}
-            </div>
-          ))}
-          {loading && (
-            <div style={{ display: 'flex', gap: '8px', color: 'var(--text-muted)', alignItems: 'center' }}>
-              <Loader2 size={16} className="spin" />
-              <span style={{ fontSize: '0.875rem' }}>Thinking...</span>
-            </div>
+            </>
           )}
           <div ref={messagesEndRef} />
         </div>
@@ -126,7 +189,7 @@ export default function AskAI() {
         <div style={{ display: 'flex', gap: '12px', borderTop: '1px solid var(--border)', paddingTop: '20px' }}>
           <input 
             type="text" 
-            placeholder="Ask me anything (e.g. 'Summarize my IT tickets')" 
+            placeholder="Ask me anything..." 
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSend()}
@@ -142,7 +205,7 @@ export default function AskAI() {
           />
           <button 
             onClick={handleSend}
-            disabled={loading}
+            disabled={agentLoading}
             className="btn" 
             style={{ width: 'auto', display: 'flex', alignItems: 'center', gap: '8px' }}
           >

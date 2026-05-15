@@ -29,7 +29,8 @@ const HR_DASHBOARD_QUERY = gql`
         id
         title
         status
-        date
+        startDate
+        endDate
       }
     }
   }
@@ -87,7 +88,11 @@ export default function HRMSDashboard() {
           <div className="hrms-menu-icon"><Calendar size={20} /></div>
           <div className="hrms-menu-content">
             <span className="hrms-menu-label">Apply leave</span>
-            <span className="hrms-menu-subtext">Last: 3 days · Approved</span>
+            <span className="hrms-menu-subtext">
+              {hrDashboard.recentRequests[0] 
+                ? `Last: ${hrDashboard.recentRequests[0].title}`
+                : 'No recent requests'}
+            </span>
           </div>
           <ChevronRight size={20} color="#d1d5db" />
         </div>

@@ -1,0 +1,46 @@
+{
+  "requests": [
+    {
+      "id": "HR-419",
+      "title": "Casual Leave",
+      "status": "Pending",
+      "date": "2026-05-14"
+    },
+    {
+      "id": "HR-737",
+      "title": "Privilege Leave",
+      "status": "Pending",
+      "date": "2026-05-14"
+    },
+    {
+      "id": "HR-516",
+      "title": "Casual Leave",
+      "status": "Pending",
+      "date": "2026-05-13"
+    },
+    {
+      "id": "HR-714",
+      "title": "Casual Leave",
+      "status": "Pending",
+      "date": "2026-05-13"
+    },
+    {
+      "id": "HR-101",
+      "title": "Annual Leave Request",
+      "status": "Approved",
+      "date": "2026-05-10"
+    },
+    {
+      "id": "HR-102",
+      "title": "Salary Certificate",
+      "status": "Pending",
+      "date": "2026-05-12"
+    }
+  ],
+  "balances": {
+    "total": 14,
+    "casual": 5,
+    "sick": 6,
+    "earned": 3
+  }
+}

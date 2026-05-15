@@ -1,13 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useMutation, gql } from '@apollo/client';
 import { 
   ChevronLeft, 
   Calendar, 
   Clock, 
   Phone, 
-  MessageSquare,
   CheckCircle2,
-  Wifi,
   Heart,
   Star,
   Monitor
@@ -27,28 +25,35 @@ const APPLY_LEAVE_MUTATION = gql`
 export default function ApplyLeave() {
   const navigate = useNavigate();
   const [leaveType, setLeaveType] = useState('Casual');
-  const [fromDate, setFromDate] = useState('2026-05-14');
-  const [toDate, setToDate] = useState('2026-05-16');
+  const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
+  const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
   const [reason, setReason] = useState('');
   const [contact, setContact] = useState('+91 98xxx xxxxx');
   const [submitted, setSubmitted] = useState(false);
 
   const [applyLeave, { loading }] = useMutation(APPLY_LEAVE_MUTATION, {
-    refetchQueries: ['GetHrDashboard', 'GetDashboard'],
+    refetchQueries: ['hrDashboard'],
     onCompleted: () => {
       setSubmitted(true);
       setTimeout(() => navigate('/hrms'), 2000);
     }
   });
 
+  const calculateDays = () => {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) return 0;
+    const diffTime = Math.abs(end.getTime() - start.getTime());
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+  };
 
   const handleSubmit = () => {
     applyLeave({
       variables: {
         input: {
           type: leaveType,
-          fromDate,
-          toDate,
+          startDate,
+          endDate,
           reason,
           contact
         }
@@ -67,10 +72,10 @@ export default function ApplyLeave() {
   }
 
   const leaveTypes = [
-    { id: 'Casual', label: 'Casual', left: '8 left', icon: <Calendar className="text-primary" />, color: '#6366f1' },
-    { id: 'Sick', label: 'Sick', left: '6 left', icon: <Heart color="#ef4444" />, color: '#ef4444' },
-    { id: 'Privilege', label: 'Privilege', left: '4 left', icon: <Star color="#f59e0b" />, color: '#f59e0b' },
-    { id: 'WFH', label: 'WFH', left: 'Unlimited', icon: <Monitor color="#10b981" />, color: '#10b981' },
+    { id: 'Casual', label: 'Casual', icon: <Calendar className="text-primary" />, color: '#6366f1' },
+    { id: 'Sick', label: 'Sick', icon: <Heart color="#ef4444" />, color: '#ef4444' },
+    { id: 'Privilege', label: 'Privilege', icon: <Star color="#f59e0b" />, color: '#f59e0b' },
+    { id: 'WFH', label: 'WFH', icon: <Monitor color="#10b981" />, color: '#10b981' },
   ];
 
   return (
@@ -111,7 +116,6 @@ export default function ApplyLeave() {
             </div>
             <div>
               <div style={{ fontWeight: 700, fontSize: '0.9375rem' }}>{type.label}</div>
-              <div style={{ fontSize: '0.75rem', opacity: 0.6 }}>{type.left}</div>
             </div>
           </div>
         ))}
@@ -124,7 +128,7 @@ export default function ApplyLeave() {
             <label style={{ fontSize: '0.75rem', fontWeight: 700, color: '#6b7280', display: 'block', marginBottom: '8px' }}>From</label>
             <div style={{ border: '1px solid #e5e7eb', padding: '12px', borderRadius: '12px', display: 'flex', gap: '8px', alignItems: 'center' }}>
               <Calendar size={16} color="#6b7280" />
-              <input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} style={{ border: 'none', fontSize: '0.875rem', outline: 'none', width: '100%' }} />
+              <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} style={{ border: 'none', fontSize: '0.875rem', outline: 'none', width: '100%' }} />
             </div>
           </div>
           <div style={{ color: '#d1d5db', marginTop: '20px' }}>→</div>
@@ -132,13 +136,13 @@ export default function ApplyLeave() {
             <label style={{ fontSize: '0.75rem', fontWeight: 700, color: '#6b7280', display: 'block', marginBottom: '8px' }}>To</label>
             <div style={{ border: '1px solid #e5e7eb', padding: '12px', borderRadius: '12px', display: 'flex', gap: '8px', alignItems: 'center' }}>
               <Calendar size={16} color="#6b7280" />
-              <input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} style={{ border: 'none', fontSize: '0.875rem', outline: 'none', width: '100%' }} />
+              <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} style={{ border: 'none', fontSize: '0.875rem', outline: 'none', width: '100%' }} />
             </div>
           </div>
         </div>
         <div style={{ background: '#fef3f2', padding: '12px 16px', borderRadius: '12px', display: 'flex', gap: '12px', alignItems: 'center', color: '#991b1b' }}>
           <Clock size={18} />
-          <div style={{ fontSize: '0.8125rem', fontWeight: 600 }}>3 working days · Manager: Rohit Sharma</div>
+          <div style={{ fontSize: '0.8125rem', fontWeight: 600 }}>{calculateDays()} working days</div>
         </div>
       </div>
 

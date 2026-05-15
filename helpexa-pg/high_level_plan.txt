@@ -1,0 +1,71 @@
+A very High level design of Helpexa
+ 
+ 
+1. SSO for login/Authentication(Authenticator)
+
+2. Launch Screen(Navigation -> Home Tab)
+
+3. Tabs(Home, ASK AI, Notifications, Account)
+
+Home(Domains)
+
+├── Announcements(Banner Carousel)
+
+List(Table)
+
+├── IT Helpdesk
+
+├── HR Self-Service
+
+├── Expense / Travel
+
+├── Learning
+
+├── Approvals
+
+└── Engagement Surveys
+ 
+ASK AI(PI Assist)
+
+── Integrate PI Assist
+ 
+Notifications
+
+── Get updates about the requests/approvals
+ 
+Account
+
+── Edit Profile
+
+── send feedback
+
+── Rate the app
+
+── Terms and Conditions
+
+── Privacy Policy
+
+── Sign Out
+ 
+API Requirements
+ 
+└── GraphQL BFF
+
+       ├── HR service
+
+       ├── ITSM service
+
+       ├── Learning service
+
+       ├── Expense service
+
+       ├── Travel service
+ 
+       ├── PI Assist AI service
+ 
+       ├── Notification service
+ 
+       └── Profile
+ 
+We can use this to design the app structure
+ 
