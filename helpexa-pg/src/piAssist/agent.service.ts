@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { GoogleGenerativeAI, GenerativeModel, ChatSession } from '@google/generative-ai';
+import { GoogleGenerativeAI, GenerativeModel, ChatSession, SchemaType } from '@google/generative-ai';
 import { HrService } from '../hr/hr.service';
 import { ItsmService } from '../itsm/itsm.service';
 import { ExpenseService } from '../expense/expense.service';
@@ -42,17 +42,17 @@ export class AgentService {
             { name: 'get_hr_dashboard', description: 'Fetch HR dashboard (balances/attendance).' },
             { name: 'get_learning_courses', description: 'Fetch all training courses.' },
             { name: 'get_approvals', description: 'Fetch all pending approvals.' },
-            { 
-              name: 'apply_leave', 
+            {
+              name: 'apply_leave',
               description: 'Create a NEW leave request for the user.',
               parameters: {
-                type: 'OBJECT',
+                type: SchemaType.OBJECT,
                 properties: {
-                  type: { type: 'STRING', description: 'Type of leave (Casual, Sick, Earned)' },
-                  startDate: { type: 'STRING', description: 'Start date in YYYY-MM-DD format' },
-                  endDate: { type: 'STRING', description: 'End date in YYYY-MM-DD format' },
-                  reason: { type: 'STRING', description: 'Optional reason for leave' },
-                  contact: { type: 'STRING', description: 'Emergency contact number' }
+                  type: { type: SchemaType.STRING, description: 'Type of leave (Casual, Sick, Earned)' },
+                  startDate: { type: SchemaType.STRING, description: 'Start date in YYYY-MM-DD format' },
+                  endDate: { type: SchemaType.STRING, description: 'End date in YYYY-MM-DD format' },
+                  reason: { type: SchemaType.STRING, description: 'Optional reason for leave' },
+                  contact: { type: SchemaType.STRING, description: 'Emergency contact number' }
                 },
                 required: ['type', 'startDate', 'endDate']
               }
@@ -61,12 +61,12 @@ export class AgentService {
               name: 'create_it_ticket',
               description: 'Create a NEW IT support ticket for hardware, software, or access issues.',
               parameters: {
-                type: 'OBJECT',
+                type: SchemaType.OBJECT,
                 properties: {
-                  category: { type: 'STRING', description: 'Category (Hardware, Software, Access, Network)' },
-                  priority: { type: 'STRING', description: 'Priority (Low, Medium, High, Urgent)' },
-                  subject: { type: 'STRING', description: 'Short summary of the issue' },
-                  description: { type: 'STRING', description: 'Detailed explanation' }
+                  category: { type: SchemaType.STRING, description: 'Category (Hardware, Software, Access, Network)' },
+                  priority: { type: SchemaType.STRING, description: 'Priority (Low, Medium, High, Urgent)' },
+                  subject: { type: SchemaType.STRING, description: 'Short summary of the issue' },
+                  description: { type: SchemaType.STRING, description: 'Detailed explanation' }
                 },
                 required: ['category', 'priority', 'subject', 'description']
               }
@@ -80,7 +80,7 @@ export class AgentService {
 
   async processRequest(prompt: string, userId?: string): Promise<AgentResponse> {
     const useRealAI = this.configService.get<string>('USE_REAL_AI') === 'true';
-    
+
     if (useRealAI && this.model) {
       return this.processRealGemini(prompt, userId);
     } else {
@@ -90,10 +90,10 @@ export class AgentService {
 
   private async processRealGemini(prompt: string, userId?: string): Promise<AgentResponse> {
     if (!this.model || !this.activeChat) throw new Error('AI Model not initialized');
-    
+
     const result = await this.activeChat.sendMessage(prompt);
     const response = await result.response;
-    
+
     const toolsUsed: string[] = [];
     let text = '';
 
@@ -105,7 +105,7 @@ export class AgentService {
 
     const candidate = response.candidates?.[0];
     const calls = candidate?.content?.parts?.filter((p: any) => p.functionCall) || [];
-    
+
     if (calls.length > 0) {
       const toolResponses = [];
       for (const call of calls) {

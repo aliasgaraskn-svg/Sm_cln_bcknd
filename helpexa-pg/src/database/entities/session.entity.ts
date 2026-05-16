@@ -12,7 +12,7 @@ export class UserSession {
   @ManyToOne(() => User)
   user: User;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamp', precision: 6, default: () => 'CURRENT_TIMESTAMP(6)' })
   createdAt: Date;
 
   @Column({ default: true })

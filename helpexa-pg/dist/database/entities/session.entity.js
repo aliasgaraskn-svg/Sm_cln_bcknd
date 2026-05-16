@@ -33,7 +33,7 @@ __decorate([
     __metadata("design:type", user_entity_1.User)
 ], UserSession.prototype, "user", void 0);
 __decorate([
-    (0, typeorm_1.CreateDateColumn)(),
+    (0, typeorm_1.CreateDateColumn)({ type: 'timestamp', precision: 6, default: () => 'CURRENT_TIMESTAMP(6)' }),
     __metadata("design:type", Date)
 ], UserSession.prototype, "createdAt", void 0);
 __decorate([

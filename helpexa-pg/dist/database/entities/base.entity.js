@@ -24,12 +24,12 @@ __decorate([
     __metadata("design:type", String)
 ], BaseEntity.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.CreateDateColumn)({ name: 'create_datetime' }),
+    (0, typeorm_1.CreateDateColumn)({ name: 'create_datetime', type: 'timestamp', precision: 6, default: () => 'CURRENT_TIMESTAMP(6)' }),
     (0, graphql_1.Field)(),
     __metadata("design:type", Date)
 ], BaseEntity.prototype, "create_datetime", void 0);
 __decorate([
-    (0, typeorm_1.UpdateDateColumn)({ name: 'update_datetime' }),
+    (0, typeorm_1.UpdateDateColumn)({ name: 'update_datetime', type: 'timestamp', precision: 6, default: () => 'CURRENT_TIMESTAMP(6)', onUpdate: 'CURRENT_TIMESTAMP(6)' }),
     (0, graphql_1.Field)(),
     __metadata("design:type", Date)
 ], BaseEntity.prototype, "update_datetime", void 0);

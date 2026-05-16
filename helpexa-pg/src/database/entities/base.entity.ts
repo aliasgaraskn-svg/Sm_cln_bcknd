@@ -7,11 +7,11 @@ export abstract class BaseEntity {
   @Field(() => ID)
   id: string;
 
-  @CreateDateColumn({ name: 'create_datetime' })
+  @CreateDateColumn({ name: 'create_datetime', type: 'timestamp', precision: 6, default: () => 'CURRENT_TIMESTAMP(6)' })
   @Field()
   create_datetime: Date;
 
-  @UpdateDateColumn({ name: 'update_datetime' })
+  @UpdateDateColumn({ name: 'update_datetime', type: 'timestamp', precision: 6, default: () => 'CURRENT_TIMESTAMP(6)', onUpdate: 'CURRENT_TIMESTAMP(6)' })
   @Field()
   update_datetime: Date;
 }

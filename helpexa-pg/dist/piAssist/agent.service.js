@@ -58,13 +58,13 @@ let AgentService = class AgentService {
                                 name: 'apply_leave',
                                 description: 'Create a NEW leave request for the user.',
                                 parameters: {
-                                    type: 'OBJECT',
+                                    type: generative_ai_1.SchemaType.OBJECT,
                                     properties: {
-                                        type: { type: 'STRING', description: 'Type of leave (Casual, Sick, Earned)' },
-                                        startDate: { type: 'STRING', description: 'Start date in YYYY-MM-DD format' },
-                                        endDate: { type: 'STRING', description: 'End date in YYYY-MM-DD format' },
-                                        reason: { type: 'STRING', description: 'Optional reason for leave' },
-                                        contact: { type: 'STRING', description: 'Emergency contact number' }
+                                        type: { type: generative_ai_1.SchemaType.STRING, description: 'Type of leave (Casual, Sick, Earned)' },
+                                        startDate: { type: generative_ai_1.SchemaType.STRING, description: 'Start date in YYYY-MM-DD format' },
+                                        endDate: { type: generative_ai_1.SchemaType.STRING, description: 'End date in YYYY-MM-DD format' },
+                                        reason: { type: generative_ai_1.SchemaType.STRING, description: 'Optional reason for leave' },
+                                        contact: { type: generative_ai_1.SchemaType.STRING, description: 'Emergency contact number' }
                                     },
                                     required: ['type', 'startDate', 'endDate']
                                 }
@@ -73,12 +73,12 @@ let AgentService = class AgentService {
                                 name: 'create_it_ticket',
                                 description: 'Create a NEW IT support ticket for hardware, software, or access issues.',
                                 parameters: {
-                                    type: 'OBJECT',
+                                    type: generative_ai_1.SchemaType.OBJECT,
                                     properties: {
-                                        category: { type: 'STRING', description: 'Category (Hardware, Software, Access, Network)' },
-                                        priority: { type: 'STRING', description: 'Priority (Low, Medium, High, Urgent)' },
-                                        subject: { type: 'STRING', description: 'Short summary of the issue' },
-                                        description: { type: 'STRING', description: 'Detailed explanation' }
+                                        category: { type: generative_ai_1.SchemaType.STRING, description: 'Category (Hardware, Software, Access, Network)' },
+                                        priority: { type: generative_ai_1.SchemaType.STRING, description: 'Priority (Low, Medium, High, Urgent)' },
+                                        subject: { type: generative_ai_1.SchemaType.STRING, description: 'Short summary of the issue' },
+                                        description: { type: generative_ai_1.SchemaType.STRING, description: 'Detailed explanation' }
                                     },
                                     required: ['category', 'priority', 'subject', 'description']
                                 }
